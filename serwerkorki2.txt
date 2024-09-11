@@ -1,4 +1,4 @@
-package com.example.hubertprotasiuk.rest;
+package com.example.hubertprotasiuk.rest;                                tutaj jak napisac kontroler
 
 import com.example.hubertprotasiuk.service.Rectangle;
 import org.springframework.web.bind.annotation.*;
@@ -9,28 +9,28 @@ import java.util.List;
 @RestController
 public class RectangleController {
 
-    private List<Rectangle> prostokaty = new ArrayList<>();
-    @GetMapping(path = "/zwrocprostokat")
+    private List<Rectangle> prostokaty = new ArrayList<>();     --Stwórz prywatną listę prostokątów.
+    @GetMapping(path = "/zwrocprostokat")                         --Napisz kontroler REST RectangleController posiadający metodę, której wywołanie spowoduje wyświetlenie obiektu Rectangle zmapowanego na JSON.
     public Rectangle zwrot(){
         return new Rectangle(3.2,5.3,6,7,"red");
     }
-    @PostMapping(path = "/dodajprostokat")
+    @PostMapping(path = "/dodajprostokat")        -- metodę dodającą prostokąt, by odpowiadała na żądanie HTTP POST. Niech metoda przyjmuje prostokąt, który zostanie zdefiniowany w ciele żądania HTTP.
     public void addRect(@RequestBody RectangleBody rectangle1){
         prostokaty.add(new Rectangle(rectangle1.getX(), rectangle1.getY(), rectangle1.getWidth(), rectangle1.getHeight(), rectangle1.getColor()));
     }
-    @GetMapping(path = "/pokazliste")
+    @GetMapping(path = "/pokazliste")        --Napisz metodę, która zwróci listę prostokątów zmapowaną na JSON.
     public List<Rectangle> listShow(){
         return prostokaty;
     }
-    @GetMapping(path = "/wybierzprostokat/{x}")
+    @GetMapping(path = "/wybierzprostokat/{x}")       --GET z argumentem typu int,  zwracającą prostokąt w liście o podanym indeksie.
     public Rectangle GET(@PathVariable("x") int x){
             return prostokaty.get(x);
         }
-    @PutMapping(path = "/zmienprostindex/{x}")
+    @PutMapping(path = "/zmienprostindex/{x}")  --PUT z argumentem typu int i argumentem typu Rectangle, modyfikującą istniejący na liście pod tym indeksem prostokąt na prostokąt przekazany argumentem.
     public void PUT(@PathVariable("x") int x,@RequestBody RectangleBody rect){
         prostokaty.set(x,new Rectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), rect.getColor()));
     }
-    @DeleteMapping(path = "/usunprost/{x}")
+    @DeleteMapping(path = "/usunprost/{x}")  --DELETE  z argumentem typu int, usuwającą prostokąt z listy z miejsca o podanym indeksie.
     public void DELETE(@PathVariable("x") int x){
         prostokaty.remove(x);
     }
@@ -38,8 +38,8 @@ public class RectangleController {
 
 }
 
-POST http://localhost:8080/dodajprostokat
-Content-Type: application/json
+POST http://localhost:8080/dodajprostokat        --metody testujace 
+Content-Type: application/json            --jesli na json to trzeba to dodac podczas testowania
 
 {
 "x": 1.3,
