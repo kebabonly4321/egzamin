@@ -1,0 +1,51 @@
+Krzysztof, 20:04
+package com.example.hubertprotasiuk.rest;
+
+import jakarta.xml.bind.DatatypeConverter;
+import org.apache.commons.io.FileUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
+
+@RestController
+public class ImageController {
+    public static int Truncate(int value) {
+        if (value < 0) value = 0;
+        else if (value > 255) value = 255;
+        return value;
+    }
+    @GetMapping(path = "/zmienjasnosc/{x}")
+    public String ChangeImage(String image, @PathVariable ("x") int x) throws IOException {
+
+        byte[] imageBytes = DatatypeConverter.parseBase64Binary(image);
+
+        File f = new File(Arrays.toString(imageBytes));
+        BufferedImage zdj = ImageIO.read(f);
+        int rgb[];
+        int brightnessValue = 25;
+        for (int i = 0; i < zdj.getWidth(); i++) {
+            for (int j = 0; j < zdj.getHeight(); j++) {
+                rgb = zdj.getRaster().getPixel(i, j, new int[3]);
+                int red = Truncate(rgb[0] + x);
+                int green = Truncate(rgb[1] + x);
+                int blue = Truncate(rgb[2] + x);
+                int arr[] = { red, green, blue };
+                zdj.getRaster().setPixel(i, j, arr);
+            }
+        }
+        
+        return ImageIO.write(zdj, "jpg",(imageBytes);
+
+    }
+
+
+
+}

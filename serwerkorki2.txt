@@ -1,0 +1,73 @@
+package com.example.hubertprotasiuk.rest;
+
+import com.example.hubertprotasiuk.service.Rectangle;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class RectangleController {
+
+    private List<Rectangle> prostokaty = new ArrayList<>();
+    @GetMapping(path = "/zwrocprostokat")
+    public Rectangle zwrot(){
+        return new Rectangle(3.2,5.3,6,7,"red");
+    }
+    @PostMapping(path = "/dodajprostokat")
+    public void addRect(@RequestBody RectangleBody rectangle1){
+        prostokaty.add(new Rectangle(rectangle1.getX(), rectangle1.getY(), rectangle1.getWidth(), rectangle1.getHeight(), rectangle1.getColor()));
+    }
+    @GetMapping(path = "/pokazliste")
+    public List<Rectangle> listShow(){
+        return prostokaty;
+    }
+    @GetMapping(path = "/wybierzprostokat/{x}")
+    public Rectangle GET(@PathVariable("x") int x){
+            return prostokaty.get(x);
+        }
+    @PutMapping(path = "/zmienprostindex/{x}")
+    public void PUT(@PathVariable("x") int x,@RequestBody RectangleBody rect){
+        prostokaty.set(x,new Rectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), rect.getColor()));
+    }
+    @DeleteMapping(path = "/usunprost/{x}")
+    public void DELETE(@PathVariable("x") int x){
+        prostokaty.remove(x);
+    }
+
+
+}
+
+POST http://localhost:8080/dodajprostokat
+Content-Type: application/json
+
+{
+"x": 1.3,
+"y": 3.5,
+"width": 34,
+"height": 51,
+"color": "red"
+}
+###
+GET http://localhost:8080/wybierzprostokat/0
+
+###
+PUT http://localhost:8080/zmienprostindex/0
+Content-Type: application/json
+
+{
+  "x": 14,
+  "y": 33,
+  "width": 10,
+  "height": 3,
+  "color": "blue"
+}
+###
+GET http://localhost:8080/pokazliste
+###
+DELETE http://localhost:8080/usunprost/0
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
