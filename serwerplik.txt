@@ -1,0 +1,128 @@
+package com.example.hubertprotasiuk.rest;      --controller dla klienta
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+
+@RestController
+public class HelloController {
+    @GetMapping
+    String witam() throws IOException {
+        Client klient = new Client();
+        klient.login("hubi")
+        return klient.sendMessage("siema");
+
+    }
+}
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Server {
+    private ServerSocket serverSocket;
+
+    public void start(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+        while (true)
+            new EchoClientHandler(serverSocket.accept()).start();
+    }
+
+    public void stop() throws IOException {
+        serverSocket.close();
+    }
+
+    private static class EchoClientHandler extends Thread {
+        private Socket clientSocket;
+        private PrintWriter out;
+        private BufferedReader in;
+        private List<String> clientnames = new ArrayList<>();
+
+        public EchoClientHandler(Socket socket) {
+            this.clientSocket = socket;
+        }
+
+        public void run() {
+            System.out.println("klient cos zrobil");
+            try {
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                in = new BufferedReader(
+                        new InputStreamReader(clientSocket.getInputStream()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            String inputLine;
+            while (true) {
+                try {
+                    if ((inputLine = in.readLine()) == null) break;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+                    System.out.println("otrzymalem informacje");
+                String prefix = inputLine.substring(0,5);
+                String msg = inputLine.substring(5);
+                if(prefix.equals("LOGIN")){
+
+
+                    out.println(msg+"zalogowal sie");
+                    out.println(inputLine);
+
+            }
+            try {
+                in.close();
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            out.close();
+            try {
+                clientSocket.close();
+                out.println("klient wylaczyl sie");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}
+--klient wyglad
+package com.example.hubertprotasiuk.rest;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class Client {
+    Socket clientSocket = new Socket("localhost", 6666);
+
+    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    public String sendMessage(String msg) throws IOException {
+        out.println(msg);
+        String resp = in.readLine();
+        return resp;
+    }
+    public void login(String lgn){
+        out.println("LOGIN"+lgn);
+    }
+
+    public Client() throws IOException {
+    }
+
+}
